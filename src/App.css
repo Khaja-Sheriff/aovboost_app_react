@@ -40,3 +40,5 @@ body{ background-color: #e6e6e6; }
 
 .offerpreview{ position: relative; }
 .offerpreview.is_sticky{ position: fixed; top: 15px; }
+
+.test{ padding: auto; }
