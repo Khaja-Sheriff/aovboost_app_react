@@ -16,6 +16,10 @@ body{ background-color: #e6e6e6; }
 
 .input-group-text{ background-color: #eee;}
 
+.select{ position: relative; }
+.select::before{ content:"\F229"; font-family: bootstrap-icons!important; font-size: 11px; position: absolute; top: 11px; right: 11px; background-color: #fff; }
+.select select{ min-width: 200px; background-color: transparent !important; position: relative;}
+
 .col-gap-15{ column-gap: 15px; }
 
 .btn{ font-weight: 500; border-radius: 4px; }
@@ -28,17 +32,17 @@ body{ background-color: #e6e6e6; }
 
 .tbl-sty1{ border: #eee solid 1px; margin-bottom: 0; }
 .tbl-sty1 thead th{ background-color: #e8eefa; }
+.tbl-sty1 thead th, .tbl-sty1 tbody td, .tbl-sty1 tfoot th{ text-align: center;}
+.tbl-sty1 tbody tr.disabled td{ color: #999; }
 .tbl-sty1 tfoot th{ background-color: #f7f7f7; }
 
 .create-offer{ border: #eee solid 1px; padding: 15px; }
 .create-offer label{ margin-bottom: 5px; }
 
-.switch .switch_btn{ background-color: #ddd; width: 50px; height: 21px; border-radius: 15px; position: relative; transition: all 0.2s; }
+.switch .switch_btn{ background-color: #ddd; width: 50px; height: 21px; border-radius: 15px; position: relative; transition: all 0.2s; cursor: pointer; }
 .switch .switch_btn::before{ content: ""; position: absolute; top: 3px; left: 3px; width: 15px; height: 15px; background-color: #fff; border-radius: 50%; transition: all 0.2s; }
-.switch.enabled .switch_btn{ background-color: hsl(187.95deg 63.18% 53.14%); cursor: pointer; }
+.switch.enabled .switch_btn{ background-color: hsl(187.95deg 63.18% 53.14%); }
 .switch.enabled .switch_btn::before{ left: auto; right: 3px; }
 
 .offerpreview{ position: relative; }
 .offerpreview.is_sticky{ position: fixed; top: 15px; }
-
-.test{ padding: auto; }
