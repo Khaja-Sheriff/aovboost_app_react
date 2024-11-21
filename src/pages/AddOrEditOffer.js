@@ -54,14 +54,30 @@ export default function AddOrEditOffer() {
                         </div>
                     </div>
                     <div className="box_sty1 mt-4">
+                        <div className="row">
+                            <div className="col">
+                                <label className="form-label">Impressions</label>
+                                <input type="text" className="form-control" />
+                            </div>
+                            <div className="col">
+                                <label className="form-label">Conversions</label>
+                                <input type="text" className="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="box_sty1 mt-4">
                         <label className="form-label">Choose Your Offer Product</label>
-                        <select className="form-control">
-                            <option>Select a product</option>
-                        </select>
+                        <div className="select">
+                            <select className="form-control">
+                                <option>Select a product</option>
+                            </select>
+                        </div>
                         <label className="form-label mt-4">Choose Your Offer Product Variant (Ensure variant is in stock to show up)</label>
-                        <select className="form-control">
-                            <option>Select a variant</option>
-                        </select>
+                        <div className="select">
+                            <select className="form-control">
+                                <option>Select a variant</option>
+                            </select>
+                        </div>
                     </div>
                     <div className="box_sty1 mt-4">
                         <label className="form-label">Background Color</label>
