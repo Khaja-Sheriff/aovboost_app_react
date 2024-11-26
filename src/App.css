@@ -11,7 +11,7 @@ body{ background-color: #e6e6e6; }
 .navlinks a i{ font-size: 13px; }
 .navlinks a:hover, .navlinks a.active{ color: #3ebfd1; }
 
-.box_sty1{ background-color: #fff; padding: 15px; box-shadow: 0 0 5px #00000030;}
+.box_sty1{ background-color: #fff; padding: 15px; box-shadow: 0 0 5px #00000030; position: relative; }
 .box_sty1 label{ font-weight: 500;}
 
 .input-group-text{ background-color: #eee;}
@@ -45,4 +45,23 @@ body{ background-color: #e6e6e6; }
 .switch.enabled .switch_btn::before{ left: auto; right: 3px; }
 
 .offerpreview{ position: relative; }
+.offerpreview h2{ font-size: 16px; margin-bottom: 15px; }
 .offerpreview.is_sticky{ position: fixed; top: 15px; }
+.offerpreview .offerpreviewsec{ 
+    border: #ddd solid 1px; padding: 10px; border-radius: 6px; display: flex; align-items: center; justify-content: space-between; column-gap: 15px;
+    position: relative; 
+}
+.offerpreview .offerpreviewsec .img{ width: 70px; border: #ddd solid 1px; border-radius: 6px; }
+.offerpreview .offerpreviewsec .img img{ width: 100%; }
+.offerpreview .offerpreviewsec .txt{ display: flex; flex-direction: column; flex: 1; }
+.offerpreview .offerpreviewsec .txt .offername{ font-weight: 500; }
+.offerpreview .offerpreviewsec .txt .offercode{ 
+    position: absolute; top: 0; right: 0; font-size: 12px; background-color: orangered; color: #fff; padding: 1px 4px; border-radius: 0 6px 0 6px; font-weight: 500;
+}
+.offerpreview .offerpreviewsec .txt .offerdiscount{ font-size: 14px; }
+.offerpreview .offerpreviewsec .txt .price{ margin-right: 15px; font-weight: 500; }
+.offerpreview .offerpreviewsec .txt .price.lt{ text-decoration:line-through; color: #999; }
+.offerpreview .offerpreviewsec .txt .dprice{ font-weight: 500; color: green; }
+.offerpreview .offerpreviewsec .btn{ font-size: 14px; padding: 3px 10px; }
+
+.loader{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: #ffffffbf; display: flex; align-items: center; justify-content: center; z-index: 100; }

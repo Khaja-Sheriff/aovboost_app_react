@@ -7,7 +7,7 @@ export default function Offers() {
 
     const navigate = useNavigate();
     const [offerName, setOfferName] = useState("");
-    const [filteredItems, setfilteredItems] = useState("");
+    const [filteredItems, setfilteredItems] = useState("all");
 
     const handleChange = (e) => {
         setfilteredItems(e.target.value);
@@ -28,7 +28,7 @@ export default function Offers() {
                 <div className="flex-grow-1"></div>
                 <button className="btn btn-sty1" onClick={() => { navigate("/Offers/AddOffer") }}>Create New Offer</button>
             </div>
-            <OfferListTable isFilter={true} searchfilter={offerName} selectcategory={filteredItems} />
+            <OfferListTable searchFilter={offerName} selectCategory={filteredItems} />
         </div>
     </>);
 }

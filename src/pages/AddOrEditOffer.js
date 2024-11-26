@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import Header from "../components/Header";
+import { useNavigate } from "react-router-dom";
 
 export default function AddOrEditOffer() {
+
+    const navigate = useNavigate();
 
     const [offerPreviewWidth, setofferPreviewWidth] = useState();
     const [offerPreviewWidthSitcky, setofferPreviewWidthSitcky] = useState();
@@ -26,6 +29,40 @@ export default function AddOrEditOffer() {
         };
     }, [offerPreviewWidthSitcky]);
 
+    const [createdOffer, setcreatedOffer] = useState(
+        {
+            offer:"",
+            offerDiscountCode:"",
+            minCartValue:0,
+            offerDiscount:0,
+            impressions:0,
+            conversions:0
+        }
+    );
+
+    function isNumeric(n) {
+        return !isNaN(parseFloat(n)) && isFinite(n);
+    }
+    
+    const handleChange = (e) => {
+        const {name,value} = e.target;
+        let numCheck;
+        if (isNumeric(value)) {
+            numCheck = +value
+        } else {
+            numCheck = value
+        }
+        setcreatedOffer((prevState) => ({
+            ...prevState,
+            [name]:numCheck
+        }));
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log(createdOffer);
+    };
+
     return (<>
         <Header />
         <div className="p-4">
@@ -33,23 +70,23 @@ export default function AddOrEditOffer() {
                 <div className="col-md-8">
                     <div className="box_sty1">
                         <label className="form-label">Offer Name (Internal Use Only)</label>
-                        <input type="text" placeholder="e.g New Offer" className="form-control" />
+                        <input type="text" placeholder="e.g New Offer" className="form-control" value={createdOffer.offer} name="offer" onChange={handleChange} />
                     </div>
                     <div className="box_sty1 mt-4">
                         <label className="form-label">Offer Discount Code (Must Be Unique)</label>
-                        <input type="text" placeholder="e.g OFFER2020" className="form-control" />
+                        <input type="text" placeholder="e.g OFFER2020" className="form-control" value={createdOffer.offerDiscountCode} name="offerDiscountCode" onChange={handleChange} />
                     </div>
                     <div className="box_sty1 mt-4">
                         <label className="form-label">Minimum Cart Value (to Trigger Offer)</label>
                         <div className="input-group">
                             <span className="input-group-text">$</span>
-                            <input type="text" className="form-control" />
+                            <input type="text" className="form-control" value={createdOffer.minCartValue} name="minCartValue" onChange={handleChange} />
                         </div>
                     </div>
                     <div className="box_sty1 mt-4">
                         <label className="form-label">Set Offer Discount</label>
                         <div className="input-group">
-                            <input type="text" className="form-control" />
+                            <input type="text" className="form-control" value={createdOffer.offerDiscount} name="offerDiscount" onChange={handleChange} />
                             <span className="input-group-text">%</span>
                         </div>
                     </div>
@@ -57,11 +94,11 @@ export default function AddOrEditOffer() {
                         <div className="row">
                             <div className="col">
                                 <label className="form-label">Impressions</label>
-                                <input type="text" className="form-control" />
+                                <input type="text" className="form-control" value={createdOffer.impressions} name="impressions" onChange={handleChange} />
                             </div>
                             <div className="col">
                                 <label className="form-label">Conversions</label>
-                                <input type="text" className="form-control" />
+                                <input type="text" className="form-control" value={createdOffer.conversions} name="conversions" onChange={handleChange} />
                             </div>
                         </div>
                     </div>
@@ -102,12 +139,27 @@ export default function AddOrEditOffer() {
                         Or <label><input type="checkbox" /> Run Until Paused</label>
                     </div>
                     <div className="mt-4 mb-4 d-flex justify-content-between">
-                        <button className="btn btn-sty2">Back</button>
-                        <button className="btn btn-sty1">Create offer</button>
+                        <button className="btn btn-sty2" onClick={() => {navigate("/offers")}}>Back</button>
+                        <button className="btn btn-sty1" onClick={handleSubmit}>Create offer</button>
                     </div>
                 </div>
                 <div className="col-md-4">
-                    <div className="box_sty1 offerpreview" style={{ width: offerPreviewWidth }}>offer preview</div>
+                    <div className="box_sty1 offerpreview" style={{ width: offerPreviewWidth }}>
+                        <h2>offer preview</h2>
+                        <div className="offerpreviewsec">
+                            <div className="img"><img src="/no-image-icon-23494.png" alt="" /></div>
+                            <div className="txt">
+                                <span className="offername">{createdOffer.offer}</span>
+                                {createdOffer.offerDiscountCode &&  <span className="offercode">Offer Code: {createdOffer.offerDiscountCode}</span>}
+                                {createdOffer.offerDiscount > 0 &&  <span className="offerdiscount">{createdOffer.offerDiscount}% Discount</span>}
+                                {createdOffer.minCartValue > 0 &&  <span className="mt-1">
+                                    <span className={createdOffer.offerDiscount > 0 ? "price lt":"price"}>${createdOffer.minCartValue}/-</span>
+                                    {createdOffer.offerDiscount > 0 &&  <span className="dprice">${createdOffer.minCartValue - (createdOffer.minCartValue * createdOffer.offerDiscount / 100)}/-</span>}
+                                </span>}
+                            </div>
+                            {createdOffer.offer && createdOffer.offerDiscount > 0 && <button className="btn btn-info">Add</button>}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

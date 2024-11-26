@@ -5,7 +5,7 @@ const api_url = "http://localhost:3004/";
 export const get = (url) => {
     return axios.get(api_url + url);
 }
-export const getbyid = (url) => {
+export const getById = (url) => {
     return axios.get(api_url + url);
 }
 export const post = (url, item) => {

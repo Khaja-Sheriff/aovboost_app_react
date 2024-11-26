@@ -1,54 +1,74 @@
-import { useEffect, useState } from 'react';
-import { getitems, getitembyid, edititem, deleteitem } from '../APIs/ApiOffer';
+import { useCallback, useEffect, useState } from 'react';
+import { getItems, editItem, deleteItem } from '../APIs/ApiOffer';
+import Loader from './Loader'
 
-export default function OfferListTable({ isFilter, searchfilter, selectcategory }) {
+export default function OfferListTable({ searchFilter, selectCategory }) {
+
+    const [isLoading, setIsLoading] = useState(true);
 
     const [offerList, setOfferList] = useState([]);
 
-    const loadData = () => {
-        getitems().then((response) => {
+    const loadData = useCallback(() => {
+        getItems().then((response) => {
             const data = response.data;
+            setIsLoading(true);
             setOfferList(data);
         }).catch(console.error());
-    }
+    },[setIsLoading,setOfferList]);
 
     useEffect(() => {
         loadData();
-    }, []);
+    }, [loadData]);
 
-    const toggleitems = (itemid) => {
-        getitembyid(itemid).then((response) => {
-            const toggle = response.data.isEnabled;
-            edititem(itemid, { isEnabled: !toggle }).then(() => { loadData() });
-        }).catch(console.error());
+    const toggleItems = (item) => {
+        const toggle = item.isEnabled;
+        editItem(item.id, { isEnabled: !toggle }).then(() => { loadData() }).catch(console.error());
     };
 
-    const deleteItems = (itemid) => {
-        deleteitem(itemid).then(() => { loadData() });
+    const deleteItems = (itemId) => {
+        deleteItem(itemId).then(() => { loadData() }).catch(console.error());
     };
 
-    const filtercategory = () => {
-        switch (selectcategory) {
+    const filterCategory = useCallback(() => {
+        switch (selectCategory) {
             case "true": return offerList.filter(el => el.isEnabled === true)
             case "false": return offerList.filter(el => el.isEnabled === false)
             default: return offerList
         };
-    };
-    const filterlist = () => {
-        if (isFilter === true) {
-            return filtercategory().filter(el => el.offer.toUpperCase().includes(searchfilter.toUpperCase()))
+    },[offerList,selectCategory]);
+    
+    const filterList = useCallback(() => {
+        if (selectCategory) {
+            return filterCategory().filter(el => el.offer.toUpperCase().includes(searchFilter.toUpperCase()))
         }
         else {
             return offerList
         }
-    };
+    },[offerList,filterCategory,searchFilter,selectCategory]);
 
-    let totalImpressions = filterlist().filter(el => el.isEnabled === true).reduce((amt, cur) => { return amt + cur.impressions }, 0);
-    let totalConversions = filterlist().filter(el => el.isEnabled === true).reduce((amt, cur) => { return amt + cur.conversions }, 0);
-    let totalRevenue = filterlist().filter(el => el.isEnabled === true).reduce((amt, cur) => { return amt + cur.revenue }, 0).toFixed(2);
-    let totalConversionRate = filterlist().filter(el => el.isEnabled === true).reduce((amt, cur) => { return amt + ((cur.conversions / cur.impressions) * 100)}, 0).toFixed(2);
+    // useEffect(() => {
+    //     console.log(filterList());
+    //     filterList();
+    // },[searchFilter, selectCategory]);
+
+    useEffect(() => {
+        console.log(filterList());
+        filterList();
+    },[filterList, searchFilter, selectCategory]);
+
+    let totalImpressions = filterList().filter(el => el.isEnabled === true).reduce((amt, cur) => { return amt + cur.impressions }, 0);
+    let totalConversions = filterList().filter(el => el.isEnabled === true).reduce((amt, cur) => { return amt + cur.conversions }, 0);
+    let totalRevenue = filterList().filter(el => el.isEnabled === true).reduce((amt, cur) => { return amt + cur.revenue }, 0).toFixed(2);
+    let totalConversionRate = filterList().filter(el => el.isEnabled === true).reduce((amt, cur) => { return amt + ((cur.conversions / cur.impressions) * 100) }, 0).toFixed(2);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 2000);
+    }, [isLoading]);
 
     return (<>
+        {isLoading && <Loader />}
         <table className="table tbl-sty1">
             <thead>
                 <tr>
@@ -62,10 +82,10 @@ export default function OfferListTable({ isFilter, searchfilter, selectcategory 
                 </tr>
             </thead>
             <tbody>
-                {filterlist().map(items => (
+                {filterList().map(items => (
                     <tr key={items.id} className={items.isEnabled ? 'align-middle' : 'align-middle disabled'}>
                         <td>
-                            <div onClick={() => toggleitems(items.id)} className={items.isEnabled ? 'switch enabled' : 'switch'}><div className='switch_btn'></div></div>
+                            <div onClick={() => toggleItems(items)} className={items.isEnabled ? 'switch enabled' : 'switch'}><div className='switch_btn'></div></div>
                         </td>
                         <td className="text-start">{items.offer}</td>
                         <td>{items.impressions}</td>
