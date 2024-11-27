@@ -1,16 +1,16 @@
 
 import { RotatingLines } from "react-loader-spinner";
 
-export default function Loader() {
+export default function Loader(props) {
     return (
         <div className="loader">
             <RotatingLines
             visible={true}
-            height="50"
-            width="50"
+            height={props.size || 50}
+            width={props.size || 50}
             color="grey"
-            strokeColor="#3cbfd3"
-            strokeWidth="4"
+            strokeColor={props.strokeColor}
+            strokeWidth={props.strokeWidth || 4}
             animationDuration="0.75"
             ariaLabel="rotating-lines-loading"
             wrapperStyle={{}}

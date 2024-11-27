@@ -1,74 +1,104 @@
-import { useCallback, useEffect, useState } from 'react';
-import { getItems, editItem, deleteItem } from '../APIs/ApiOffer';
+import { useEffect, useState } from 'react';
+import { getItems, editItem, deleteItem, totalAmount } from '../APIs/ApiOffer';
 import Loader from './Loader'
 
 export default function OfferListTable({ searchFilter, selectCategory }) {
 
     const [isLoading, setIsLoading] = useState(true);
-
     const [offerList, setOfferList] = useState([]);
+    const [filteredList, setfilteredList] = useState([]);
 
-    const loadData = useCallback(() => {
+    const [total, setTotal] = useState({
+        impressions:0,
+        conversions:0,
+        revenue:0,
+        conversionRate:0
+    });
+
+    const loadData = () => {
+        setIsLoading(true);
         getItems().then((response) => {
             const data = response.data;
-            setIsLoading(true);
             setOfferList(data);
+            setfilteredList(data);
+            setIsLoading(false);
         }).catch(console.error());
-    },[setIsLoading,setOfferList]);
+    };
 
     useEffect(() => {
         loadData();
-    }, [loadData]);
+    }, []);
 
     const toggleItems = (item) => {
         const toggle = item.isEnabled;
-        editItem(item.id, { isEnabled: !toggle }).then(() => { loadData() }).catch(console.error());
+        editItem(item.id, { isEnabled: !toggle }).then(() => {
+            loadData();
+        }).catch(console.error());
     };
 
     const deleteItems = (itemId) => {
-        deleteItem(itemId).then(() => { loadData() }).catch(console.error());
+        deleteItem(itemId).then(() => {
+            loadData()
+        }).catch(console.error());
     };
 
-    const filterCategory = useCallback(() => {
-        switch (selectCategory) {
-            case "true": return offerList.filter(el => el.isEnabled === true)
-            case "false": return offerList.filter(el => el.isEnabled === false)
-            default: return offerList
+    // const filterCategory = () => {
+    //     switch (selectCategory) {
+    //         case "true": return offerList.filter(el => el.isEnabled === true)
+    //         case "false": return offerList.filter(el => el.isEnabled === false)
+    //         default: return offerList
+    //     };
+    // };
+    // const filterList = () => {
+    //     if(selectCategory){
+    //         return filterCategory().filter(el => el.offer.toUpperCase().includes(searchFilter.toUpperCase()))
+    //     }
+    //     else{
+    //         return offerList
+    //     }
+
+    // };
+
+    useEffect(() => {
+
+        const filterCategory = () => {
+            switch (selectCategory) {
+                case "true": return offerList.filter(el => el.isEnabled === true)
+                case "false": return offerList.filter(el => el.isEnabled === false)
+                default: return offerList
+            };
         };
-    },[offerList,selectCategory]);
-    
-    const filterList = useCallback(() => {
-        if (selectCategory) {
-            return filterCategory().filter(el => el.offer.toUpperCase().includes(searchFilter.toUpperCase()))
-        }
-        else {
-            return offerList
-        }
-    },[offerList,filterCategory,searchFilter,selectCategory]);
+        const filterList = () => {
+            if (selectCategory) {
+                return filterCategory().filter(el => el.offer.toUpperCase().includes(searchFilter.toUpperCase()))
+            }
+            else {
+                return offerList
+            }
+        };
 
-    // useEffect(() => {
-    //     console.log(filterList());
-    //     filterList();
-    // },[searchFilter, selectCategory]);
+        setfilteredList(filterList());
 
-    useEffect(() => {
+        setTotal({
+            impressions:filterList().filter(el => el.isEnabled === true).reduce((amt, cur) => { return amt + cur.impressions }, 0),
+            conversions:filterList().filter(el => el.isEnabled === true).reduce((amt, cur) => { return amt + cur.conversions }, 0),
+            revenue:filterList().filter(el => el.isEnabled === true).reduce((amt, cur) => { return amt + cur.revenue }, 0).toFixed(2),
+            conversionRate:filterList().filter(el => el.isEnabled === true).reduce((amt, cur) => { return amt + ((cur.conversions / cur.impressions) * 100) }, 0).toFixed(2)
+        });
+
+
         console.log(filterList());
-        filterList();
-    },[filterList, searchFilter, selectCategory]);
 
-    let totalImpressions = filterList().filter(el => el.isEnabled === true).reduce((amt, cur) => { return amt + cur.impressions }, 0);
-    let totalConversions = filterList().filter(el => el.isEnabled === true).reduce((amt, cur) => { return amt + cur.conversions }, 0);
-    let totalRevenue = filterList().filter(el => el.isEnabled === true).reduce((amt, cur) => { return amt + cur.revenue }, 0).toFixed(2);
-    let totalConversionRate = filterList().filter(el => el.isEnabled === true).reduce((amt, cur) => { return amt + ((cur.conversions / cur.impressions) * 100) }, 0).toFixed(2);
+    }, [offerList, searchFilter, selectCategory]);
 
-    useEffect(() => {
-        setTimeout(() => {
-            setIsLoading(false);
-        }, 2000);
-    }, [isLoading]);
+
+    // let totalImpressions = filterList().filter(el => el.isEnabled === true).reduce((amt, cur) => { return amt + cur.impressions }, 0);
+    // let totalConversions = filterList().filter(el => el.isEnabled === true).reduce((amt, cur) => { return amt + cur.conversions }, 0);
+    // let totalRevenue = filterList().filter(el => el.isEnabled === true).reduce((amt, cur) => { return amt + cur.revenue }, 0).toFixed(2);
+    // let totalConversionRate = filterList().filter(el => el.isEnabled === true).reduce((amt, cur) => { return amt + ((cur.conversions / cur.impressions) * 100) }, 0).toFixed(2);
 
     return (<>
-        {isLoading && <Loader />}
+        {isLoading && <Loader size="50" strokeColor="skyblue" strokeWidth="4" />}
         <table className="table tbl-sty1">
             <thead>
                 <tr>
@@ -82,7 +112,7 @@ export default function OfferListTable({ searchFilter, selectCategory }) {
                 </tr>
             </thead>
             <tbody>
-                {filterList().map(items => (
+                {filteredList.map(items => (
                     <tr key={items.id} className={items.isEnabled ? 'align-middle' : 'align-middle disabled'}>
                         <td>
                             <div onClick={() => toggleItems(items)} className={items.isEnabled ? 'switch enabled' : 'switch'}><div className='switch_btn'></div></div>
@@ -105,10 +135,10 @@ export default function OfferListTable({ searchFilter, selectCategory }) {
                 <tr>
                     <th></th>
                     <th className="text-start">Total</th>
-                    <th>{totalImpressions}</th>
-                    <th>{totalConversions}</th>
-                    <th>$ {totalRevenue}</th>
-                    <th>{totalConversionRate} %</th>
+                    <th>{total.impressions}</th>
+                    <th>{total.conversions}</th>
+                    <th>$ {total.revenue}</th>
+                    <th>{total.conversionRate} %</th>
                     <th></th>
                 </tr>
             </tfoot>
