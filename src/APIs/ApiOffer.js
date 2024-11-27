@@ -1,19 +1,19 @@
-import { deleted, get, getbyid, post, put } from "./api"
+import { deleted, get, getById, post, put } from "./api"
 
 const itemLink = "items/";
 
-export const getitems = () => {
+export const getItems = () => {
     return get(itemLink);
 }
-export const getitembyid = (id) => {
-    return getbyid(itemLink + id);
+export const getItemById = (id) => {
+    return getById(itemLink + id);
 }
-export const createitem = (item) => {
+export const createItem = (item) => {
     return post(itemLink, item);
 }
-export const edititem = (itemid, item) => {
-    return put(itemLink + itemid, item);
+export const editItem = (itemId, item) => {
+    return put(itemLink + itemId, item);
 }
-export const deleteitem = (id) => {
+export const deleteItem = (id) => {
     return deleted(itemLink + id);
 }
